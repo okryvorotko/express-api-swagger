@@ -18,7 +18,7 @@ const swaggerOptions = {
             version: "1.0.0",
             title: "Store API",
             description: "By Oleksandr Kryvorotko",
-            servers: [base_url + port]
+            servers: [`${base_url}:${port}`]
         }
     },
     apis: ["./routes/*.js", "./base-api.js"]
