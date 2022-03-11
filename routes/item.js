@@ -7,6 +7,8 @@ module.exports = function (app, store) {
      * /item/{name}:
      *  get:
      *    description: Get an item by name
+     *    tags:
+     *      - items
      *    parameters:
      *       - in: path
      *         name: name
@@ -31,6 +33,8 @@ module.exports = function (app, store) {
      * /items:
      *  get:
      *    description: Get all items in the store
+     *    tags:
+     *      - items
      *    responses:
      *      '200':
      *        description: A successful response
@@ -44,6 +48,8 @@ module.exports = function (app, store) {
      *   /item:
      *    post:
      *      description: Put an item in the store
+     *      tags:
+     *        - items
      *      consumes:
      *        - application/json
      *      parameters:
@@ -88,6 +94,8 @@ module.exports = function (app, store) {
      *   /item:
      *    put:
      *      description: Update an item in the store
+     *      tags:
+     *        - items
      *      consumes:
      *        - application/json
      *      parameters:
@@ -138,6 +146,8 @@ module.exports = function (app, store) {
      * /item/{name}:
      *  delete:
      *    description: Delete an item by name
+     *    tags:
+     *      - items
      *    parameters:
      *       - in: path
      *         name: name
