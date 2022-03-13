@@ -1,10 +1,11 @@
 const express = require('express');
-let store = require('./db/store.json');
+let store = require('../db/store.js');
+global.db = JSON.parse(JSON.stringify(store));
 let app = new express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 require('dotenv').config();
-require('./routes/item')(app, store);
+require('../routes/item')(app);
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -21,7 +22,7 @@ const swaggerOptions = {
             servers: [`${base_url}:${port}`]
         }
     },
-    apis: ["./routes/*.js", "./base-api.js"]
+    apis: ["./routes/*.js", "./api/*.js"]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -42,6 +43,24 @@ app.use(swagger_url, swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  */
 app.get('/', function (req, res) {
     res.send(`Welcome to the store!\nAll information about API is here: ${base_url}:${port}${process.env.SWAGGER_URL}`);
+});
+
+/**
+ * @swagger
+ * /reset:
+ *  post:
+ *    description: Resets store DB to initial state
+ *    responses:
+ *      '204':
+ *        description: A successful response. No content
+ *        content:
+ *          text/plain:
+ *            schema:
+ *              type: string
+ */
+app.post('/reset', function (req, res) {
+    global.db = JSON.parse(JSON.stringify(store));
+    return res.status(204).end();
 });
 
 // Create a server to listen at port 8080

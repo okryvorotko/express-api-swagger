@@ -1,7 +1,7 @@
 'use strict'
 const Joi = require("joi");
 
-module.exports = function (app, store) {
+module.exports = function (app) {
     /**
      * @swagger
      * /item/{name}:
@@ -23,7 +23,7 @@ module.exports = function (app, store) {
      *        description: Item not found
      */
     app.get('/item/:name', function (req, res) {
-        let item = store.find(entry => entry.name === req.params.name);
+        let item = db.find(entry => entry.name === req.params.name);
         if (!item) return res.status(404).send({error: `Item '${req.params.name}' was not found`});
         res.json(item);
     })
@@ -32,7 +32,7 @@ module.exports = function (app, store) {
      * @swagger
      * /items:
      *  get:
-     *    description: Get all items in the store
+     *    description: Get all items in the db
      *    tags:
      *      - items
      *    responses:
@@ -40,14 +40,14 @@ module.exports = function (app, store) {
      *        description: A successful response
      */
     app.get('/items', function (req, res) {
-        res.json(store);
+        res.json(db);
     });
 
     /**
      * @swagger
      *   /item:
      *    post:
-     *      description: Put an item in the store
+     *      description: Put an item in the db
      *      tags:
      *        - items
      *      consumes:
@@ -84,16 +84,16 @@ module.exports = function (app, store) {
         const {error} = schema.validate(req.body);
         if (error) return res.status(400).send({error: error});
 
-        store.push(req.body);
+        db.push(req.body);
 
-        res.status(201).json(store.find(entry => entry.name === req.body.name));
+        res.status(201).json(db.find(entry => entry.name === req.body.name));
     });
 
     /**
      * @swagger
      *   /item:
      *    put:
-     *      description: Update an item in the store
+     *      description: Update an item in the db
      *      tags:
      *        - items
      *      consumes:
@@ -136,9 +136,9 @@ module.exports = function (app, store) {
         }
         if (error) return res.status(400).send({error: error});
 
-        store.find(entry => entry.name === req.body.name).amount = req.body.amount;
+        db.find(entry => entry.name === req.body.name).amount = req.body.amount;
 
-        res.json(store.find(entry => entry.name === req.body.name));
+        res.json(db.find(entry => entry.name === req.body.name));
     });
 
     /**
@@ -162,10 +162,10 @@ module.exports = function (app, store) {
      *        description: Item not found
      */
     app.delete('/item/:name', function (req, res) {
-        let item = store.find(entry => entry.name === req.params.name);
+        let item = db.find(entry => entry.name === req.params.name);
         if (!item) return res.status(404).send({error: `Item that you\'re trying to delete '${req.params.name}' was not found`});
 
-        store.splice(store.indexOf(item), 1);
+        db.splice(db.indexOf(item), 1);
 
         res.status(204).end();
     });
@@ -175,7 +175,7 @@ module.exports = function (app, store) {
      */
     const errIfPresent = (name, helpers) => {
         let res;
-        res = store.find(entry => entry.name === name);
+        res = db.find(entry => entry.name === name);
         if (res) {
             return helpers.message(`Name ${name} already exists in DB. Please use PUT to update`);
         } else {
@@ -188,7 +188,7 @@ module.exports = function (app, store) {
      */
     const errIfNotPresent = (name, helpers) => {
         let res;
-        res = store.find(entry => entry.name === name);
+        res = db.find(entry => entry.name === name);
         if (!res) {
             return helpers.message(`Name ${name} does not exist in DB. Please use POST to add`);
         } else {
