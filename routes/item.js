@@ -85,6 +85,7 @@ module.exports = function (app) {
         if (error) return res.status(400).send({error: error});
 
         req.body.name = req.body.name.trim();
+
         db.push(req.body);
 
         res.status(201).json(db.find(entry => entry.name === req.body.name));
@@ -165,6 +166,7 @@ module.exports = function (app) {
      */
     app.delete('/item/:name', function (req, res) {
         req.params.name = req.params.name.trim();
+
         let item = db.find(entry => entry.name === req.params.name);
         if (!item) return res.status(404).send({error: `Item that you\'re trying to delete '${req.params.name}' was not found`});
 
@@ -179,6 +181,7 @@ module.exports = function (app) {
     const errIfPresent = (name, helpers) => {
         let res;
         name = name.trim();
+
         res = db.find(entry => entry.name === name);
         if (res) {
             return helpers.message(`Name '${name}' already exists in DB. Please use PATCH to update`);
@@ -193,6 +196,7 @@ module.exports = function (app) {
     const errIfNotPresent = (name, helpers) => {
         let res;
         name = name.trim();
+
         res = db.find(entry => entry.name === name);
         if (!res) {
             return helpers.message(`Name '${name}' does not exist in DB. Please use POST to add`);
