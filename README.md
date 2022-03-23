@@ -16,7 +16,8 @@ SWAGGER_URL=/api-docs
 4. All APIs should function according to Swagger
 
 # Tasks for QA
-1. Write automation tests for UI
-2. Write automation tests for API in the same repository
+Write automation tests for API(adding or editing item scenarios) in the same repository
 
-### TODO add bugs
+### Bugs
+1. POST and PATCH accept an item name as alphanum where documentation says it is string
+2. POST and PATCH accept an item name max 15 symbols where documentation says that there is only min limit
