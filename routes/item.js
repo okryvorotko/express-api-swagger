@@ -77,12 +77,14 @@ module.exports = function (app) {
      */
     app.post('/item', function (req, res) {
         const schema = Joi.object({
-            name: Joi.string().min(3).required().custom(errIfPresent),
+            name: Joi.string().alphanum().min(3).max(15).required().custom(errIfPresent),
             amount: Joi.number().integer().min(1).required()
-        });
+        }).strict();
 
         const {error} = schema.validate(req.body);
         if (error) return res.status(400).send({error: error});
+
+        req.body.name = req.body.name.trim();
 
         db.push(req.body);
 
@@ -92,7 +94,7 @@ module.exports = function (app) {
     /**
      * @swagger
      *   /item:
-     *    put:
+     *    patch:
      *      description: Update an item in the db
      *      tags:
      *        - items
@@ -123,15 +125,16 @@ module.exports = function (app) {
      *        '404':
      *          description: Item not found
      */
-    app.put('/item', function (req, res) {
+    app.patch('/item', function (req, res) {
         const schema = Joi.object({
-            name: Joi.string().min(3).required().custom(errIfNotPresent),
+            name: Joi.string().alphanum().min(3).max(15).required().custom(errIfNotPresent),
             amount: Joi.number().integer().min(1).required()
-        });
+        }).strict();
 
         const {error} = schema.validate(req.body);
+        req.body.name = req.body.name.trim();
 
-        if (error?.message === `Name ${req.body.name} does not exist in DB. Please use POST to add`) {
+        if (error?.message === `Name '${req.body.name}' does not exist in DB. Please use POST to add`) {
             return res.status(404).send({error: error});
         }
         if (error) return res.status(400).send({error: error});
@@ -162,6 +165,8 @@ module.exports = function (app) {
      *        description: Item not found
      */
     app.delete('/item/:name', function (req, res) {
+        req.params.name = req.params.name.trim();
+
         let item = db.find(entry => entry.name === req.params.name);
         if (!item) return res.status(404).send({error: `Item that you\'re trying to delete '${req.params.name}' was not found`});
 
@@ -175,9 +180,11 @@ module.exports = function (app) {
      */
     const errIfPresent = (name, helpers) => {
         let res;
+        name = name.trim();
+
         res = db.find(entry => entry.name === name);
         if (res) {
-            return helpers.message(`Name ${name} already exists in DB. Please use PUT to update`);
+            return helpers.message(`Name '${name}' already exists in DB. Please use PATCH to update`);
         } else {
             return name;
         }
@@ -188,9 +195,11 @@ module.exports = function (app) {
      */
     const errIfNotPresent = (name, helpers) => {
         let res;
+        name = name.trim();
+
         res = db.find(entry => entry.name === name);
         if (!res) {
-            return helpers.message(`Name ${name} does not exist in DB. Please use POST to add`);
+            return helpers.message(`Name '${name}' does not exist in DB. Please use POST to add`);
         } else {
             return name;
         }
