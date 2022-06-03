@@ -1,5 +1,5 @@
 # How to launch
-1. Clone repo
+1. Clone repo 'cd ~/Documents/Projects/express-api-swagger'
 2. Install dependencies with `npm install`
 3. Add `.env` file into root directory with content:
 ```
