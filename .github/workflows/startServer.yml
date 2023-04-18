@@ -18,7 +18,8 @@ jobs:
           PORT: ${{secrets.PORT}}
           BASE_URL: ${{secrets.BASE_URL}}
           SWAGGER_URL: ${{secrets.SWAGGER_URL}}
-          NGROK_KEY: ${{secrets.NGROK_KEY}}
       - run: |
           sudo snap install ngrok
+          ngrok config add-authtoken ${{secrets.NGROK_AUTH_TOKEN}}
+          ls -la
           ./ngrok http ${{secrets.PORT}}
