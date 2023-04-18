@@ -10,6 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: npm i
+      
+      - run: |
+          sudo snap install ngrok
+          sudo ngrok config add-authtoken ${{secrets.NGROK_AUTH_TOKEN}}
+          ls -la
+          ./ngrok http ${{secrets.PORT}}
+
       - run: node api/base-api.js
         id: start-server
         timeout-minutes: 1
@@ -18,8 +25,3 @@ jobs:
           PORT: ${{secrets.PORT}}
           BASE_URL: ${{secrets.BASE_URL}}
           SWAGGER_URL: ${{secrets.SWAGGER_URL}}
-      - run: |
-          sudo snap install ngrok
-          sudo ngrok config add-authtoken ${{secrets.NGROK_AUTH_TOKEN}}
-          ls -la
-          ./ngrok http ${{secrets.PORT}}
