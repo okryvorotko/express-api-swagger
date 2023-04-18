@@ -1,0 +1,21 @@
+name: Start server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  start-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm i
+      - run: node api/base-api.js
+        env:
+          PORT: ${{secrets.PORT}}
+          BASE_URL: ${{secrets.BASE_URL}}
+          SWAGGER_URL: ${{secrets.SWAGGER_URL}}
+          NGROK_KEY: ${{secrets.NGROK_KEY}}
+      - run: |
+          sudo snap install ngrok
+          ./ngrok http ${{secrets.PORT}}
