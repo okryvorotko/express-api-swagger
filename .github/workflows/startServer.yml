@@ -20,7 +20,7 @@ jobs:
 
       - run: node api/base-api.js
         id: start-server
-        timeout-minutes: 1
+        timeout-minutes: 10
         continue-on-error: true
         env:
           PORT: ${{secrets.PORT}}
